@@ -1,0 +1,53 @@
+# This workflow demonstrates a matrix build for three different Python versions.
+# Each job in the matrix will run in parallel, create a unique artifact,
+# and upload it with the specified naming convention.
+
+name: Multi-Platform Matrix Build
+
+# Triggers the workflow on any push to the repository
+on: [push]
+
+jobs:
+  build-and-upload:
+    # This job will run on ubuntu-latest for all matrix variants
+    runs-on: ubuntu-latest
+    
+    strategy:
+      # Define the matrix strategy
+      # This creates 3 parallel jobs for Python versions 3.9, 3.10, and 3.11
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+      # 1. Check out the repository code
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # 2. Set up the specific Python version for this matrix job
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # 3. Step with the required identifier: matrix-7c1aa7d
+      - name: Show Build Variant
+        id: matrix-7c1aa7d
+        run: |
+          echo "Starting build for Python version: ${{ matrix.python-version }}"
+          python --version
+
+      # 4. Generate a unique build artifact for this matrix job
+      - name: Generate build artifact
+        run: |
+          echo "This is the unique build output for Python ${{ matrix.python-version }}." > build-log.txt
+          echo "Timestamp: $(date)" >> build-log.txt
+          echo "Runner OS: $RUNNER_OS" >> build-log.txt
+
+      # 5. Upload the unique artifact using actions/upload-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          # Name the artifact with the required prefix and variant identifier
+          name: build-7c1aa7d-python${{ matrix.python-version }}
+          # Path to the file(s) to upload
+          path: build-log.txt
