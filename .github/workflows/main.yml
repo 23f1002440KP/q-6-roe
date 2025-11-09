@@ -30,7 +30,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # 3. Step with the required identifier: matrix-7c1aa7d
-      - name: Show Build Variant
+      - name: Show Build Variant matrix-7c1aa7d
         id: matrix-7c1aa7d
         run: |
           echo "Starting build for Python version: ${{ matrix.python-version }}"
